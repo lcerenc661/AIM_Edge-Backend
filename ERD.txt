@@ -1,0 +1,41 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table Invoice {
+  id string [primary key]
+  clientID string
+  created_at timestamp 
+  InvoiceImage string
+}
+
+Table InvoiceProducts{
+  id string [primary key]
+  productId string 
+  quantity number
+  invoiceId string
+}
+
+
+Table users {
+  id string [primary key]
+  email email 
+  password string
+  role varchar
+  created_at timestamp
+}
+
+
+Table Products {
+  id string [primary key]
+  name string
+  description string 
+  value number
+  created_at timestamp 
+}
+
+
+
+
+Ref: users.id < Invoice.clientID
+Ref: Invoice.id < InvoiceProducts.invoiceId //one to many
+Ref: InvoiceProducts.productId > Products.id//one to many
