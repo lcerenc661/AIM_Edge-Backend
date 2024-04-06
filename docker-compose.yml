@@ -1,16 +1,18 @@
-version: '0.0'
-
-
+version: "3.3"
 services:
-
-  mysql-db:
+  db:
     image: mysql:8.0.29
     restart: always
     environment:
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQLS_DB: ${MYSQLS_DB}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - ./mysql:/var/lib/mysql/data
+      MYSQL_DATABASE: ${MYSQLS_DB}
+
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - 5432:5432
+      - 3306:3306
+    expose:
+      - 3306
+    volumes:
+      - ./mysql:/var/lib/mysql/
+
+volumes:
+  mysql:
