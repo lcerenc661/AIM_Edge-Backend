@@ -20,9 +20,9 @@ enum Role {
 
 model User {
   id        String   @id @default(uuid())
-  email     String
+  email     String   @unique
   password  String
-  role      Role
+  role      Role     @default(client)
   createdAt DateTime @default(now())
 
   // Relations
@@ -33,7 +33,7 @@ model Invoice {
   id           String   @id @default(uuid())
   clientId     String
   createdAt    DateTime @default(now())
-  invoiceImage String
+  invoiceImage String?
 
   // Relations
 
@@ -55,7 +55,7 @@ model InvoiceProduct {
 model Product {
   id          String   @id @default(uuid())
   name        String
-  description String
+  description String?
   value       Float
   createdAt   DateTime @default(now())
 }
