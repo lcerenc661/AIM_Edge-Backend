@@ -12,6 +12,8 @@ export class InvoiceRoutes {
     const todoController = new InvoiceController();
 
     router.get('/', todoController.getInvoices );
+    router.post('/', todoController.createInvoice );
+    
 
 
     return router;
