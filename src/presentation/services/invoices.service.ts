@@ -1,20 +1,30 @@
-import { Invoice as prismaInvoice }  from "@prisma/client";
+import { Invoice as prismaInvoice } from "@prisma/client";
 import { prisma } from "../../data/mysql_";
 import {
   CreateInvoiceData,
   Invoice,
+  User,
 } from "../../interfaces/invoice.interface";
 import { CustomError } from "../../domain";
 
 export class InvoiceService {
   constructor() {}
 
-  public getTotal(invoiceComplete: Invoice): number {
+  private getTotal(invoiceComplete: Invoice): number {
     const total = invoiceComplete.invoiceProduct.reduce(
       (accumulator, item) => accumulator + item.product.value * item.quantity,
       0
     );
     return total;
+  }
+
+  private getClientSeniority(user: User) {
+    const { createdAt } = user;
+    const actualDate = new Date();
+    const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25;
+
+    let timeDifference = (actualDate.getTime() - createdAt.getTime()) / millisecondsInYear;
+    return timeDifference.toFixed(0);
   }
 
   public async getInvoiceList() {
@@ -29,12 +39,13 @@ export class InvoiceService {
       },
     });
 
-    const newInvoices = invoices.map((invoice)=>{
-      const total = this.getTotal(invoice as any)
-      return { ...invoice, total}
-    })
+    const newInvoices = invoices.map((invoice) => {
+      const total = this.getTotal(invoice as any);
+      const clientSeniority = this.getClientSeniority(invoice.user);
+      return { ...invoice, total, clientSeniority };
+    });
 
-    return{ newInvoices}
+    return { newInvoices };
   }
 
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
