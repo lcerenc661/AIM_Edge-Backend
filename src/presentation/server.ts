@@ -15,7 +15,7 @@ export class Server {
 
   async start() {
     //*Middlewares
-    this.app.use(express.json())
+    this.app.use(express.json());
 
     //*Routes
     this.app.use(this.routes);

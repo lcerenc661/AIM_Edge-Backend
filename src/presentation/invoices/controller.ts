@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { prisma } from "../../data/mysql_";
-import { Invoice } from "@prisma/client";
 import { validationResult } from "express-validator";
 import { CreateInvoiceData } from "../../interfaces/invoice.interface";
 import { InvoiceService } from "../services/invoices.service";
