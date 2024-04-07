@@ -9,20 +9,10 @@ export class InvoiceController {
   constructor(public readonly invoiceService: InvoiceService) {}
 
   public getInvoices = async (req: Request, res: Response) => {
-    // const invoices = await prisma.invoice.findMany({
-    //   include: {
-    //     invoiceProduct: {
-    //       include: {
-    //         product: true,
-    //       },
-    //     },
-    //     user: true,
-    //   },
-    // });
     this.invoiceService
       .getInvoiceList()
       .then(({ newInvoices }) => res.json(newInvoices));
-    // return res.json(invoices);
+
   };
 
   public createInvoice = async (req: Request, res: Response) => {
