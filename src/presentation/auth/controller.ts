@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../../data/mysql";
+import { prisma } from "../../data/mysql_";
 
 
 export class AuthController {
