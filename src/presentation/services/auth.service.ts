@@ -1,8 +1,7 @@
-import { bcryptAdapter } from "../../config";
+import { bcryptAdapter, jwtAdapter } from "../../config";
 import { prisma } from "../../data/mysql_";
 import { CustomError } from "../../domain";
 import { Login, Register } from "../../interfaces/invoice.interface";
-import bcryptjs from "bcryptjs";
 
 export class AuthService {
   constructor() {}
@@ -30,8 +29,13 @@ export class AuthService {
       throw CustomError.internalServer("Bad request");
     }
     const { password, ...restUser } = newUser;
+    const token = await jwtAdapter.generateToken({ id: newUser.id });
+    console.log(token);
+    if (!token) {
+      throw CustomError.internalServer("Error creating JWT");
+    }
 
-    return { restUser, token: "token" };
+    return { restUser, token: token };
   }
 
   public async loginUser(loginData: Login) {
@@ -49,9 +53,15 @@ export class AuthService {
 
     const { password, ...restUser } = user;
 
+    const token = await jwtAdapter.generateToken({ id: user.id });
+    console.log(token);
+    if (!token) {
+      throw CustomError.internalServer("Error creating JWT");
+    }
+
     return {
       user: { ...restUser },
-      toke: "token",
+      token: token,
     };
   }
 }
