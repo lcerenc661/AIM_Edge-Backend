@@ -1,17 +1,46 @@
-import { Invoice } from "@prisma/client";
+import { Invoice as prismaInvoice }  from "@prisma/client";
 import { prisma } from "../../data/mysql_";
-import { CreateInvoiceData } from "../../interfaces/invoice.interface";
+import {
+  CreateInvoiceData,
+  Invoice,
+} from "../../interfaces/invoice.interface";
 import { CustomError } from "../../domain";
 
 export class InvoiceService {
   constructor() {}
 
-  public getInvoiceList() {}
+  public getTotal(invoiceComplete: Invoice): number {
+    const total = invoiceComplete.invoiceProduct.reduce(
+      (accumulator, item) => accumulator + item.product.value * item.quantity,
+      0
+    );
+    return total;
+  }
+
+  public async getInvoiceList() {
+    const invoices = await prisma.invoice.findMany({
+      include: {
+        invoiceProduct: {
+          include: {
+            product: true,
+          },
+        },
+        user: true,
+      },
+    });
+
+    const newInvoices = invoices.map((invoice)=>{
+      const total = this.getTotal(invoice as any)
+      return { ...invoice, total}
+    })
+
+    return{ newInvoices}
+  }
 
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
     const { clientId, invoiceImage, invoiceProducts }: CreateInvoiceData =
       createInvoiceData;
-    let newInvoice: Invoice;
+    let newInvoice: prismaInvoice;
 
     try {
       newInvoice = await prisma.invoice.create({

@@ -9,17 +9,20 @@ export class InvoiceController {
   constructor(public readonly invoiceService: InvoiceService) {}
 
   public getInvoices = async (req: Request, res: Response) => {
-    const invoices = await prisma.invoice.findMany({
-      include: {
-        invoiceProduct: {
-          include: {
-            product: true,
-          },
-        },
-        user: true,
-      },
-    });
-    return res.json(invoices);
+    // const invoices = await prisma.invoice.findMany({
+    //   include: {
+    //     invoiceProduct: {
+    //       include: {
+    //         product: true,
+    //       },
+    //     },
+    //     user: true,
+    //   },
+    // });
+    this.invoiceService
+      .getInvoiceList()
+      .then(({ newInvoices }) => res.json(newInvoices));
+    // return res.json(invoices);
   };
 
   public createInvoice = async (req: Request, res: Response) => {
@@ -30,8 +33,8 @@ export class InvoiceController {
     const { clientId, invoiceImage, invoiceProducts }: CreateInvoiceData =
       req.body;
 
-    this.invoiceService.createInvoice({clientId, invoiceImage, invoiceProducts })
-      .then((newInvoice) => res.json(newInvoice))
-
+    this.invoiceService
+      .createInvoice({ clientId, invoiceImage, invoiceProducts })
+      .then((newInvoice) => res.json(newInvoice));
   };
 }
