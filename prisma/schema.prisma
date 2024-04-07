@@ -19,7 +19,7 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        Int  @id @default(autoincrement())
   email     String   @unique
   password  String
   role      Role     @default(client)
@@ -30,8 +30,8 @@ model User {
 }
 
 model Invoice {
-  id           String   @id @default(uuid())
-  clientId     String
+  id           Int  @id @default(autoincrement())
+  clientId     Int
   createdAt    DateTime @default(now())
   invoiceImage String?
 
@@ -42,10 +42,10 @@ model Invoice {
 }
 
 model InvoiceProduct {
-  id        String @id @default(uuid())
-  productId String
+  id        Int  @id @default(autoincrement())
+  productId Int
   quantity  Int
-  invoiceId String
+  invoiceId Int
 
   //Relations
 
@@ -53,7 +53,7 @@ model InvoiceProduct {
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          Int  @id @default(autoincrement())
   name        String
   description String?
   value       Float
