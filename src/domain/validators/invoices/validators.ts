@@ -14,3 +14,5 @@ export const createInvoiceValidator = [
   body("invoiceProducts.*.product", "Product must be a string").isInt(),
   body("invoiceProducts.*.quantity", "Quantity must be a number").isNumeric(),
 ];
+
+
