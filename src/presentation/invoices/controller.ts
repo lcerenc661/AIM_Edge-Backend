@@ -5,12 +5,12 @@ import { Invoice } from "@prisma/client";
 import { validationResult } from "express-validator";
 
 interface InvoiceProduct {
-  product: string;
+  product: number;
   quantity: number;
 }
 
 interface createData {
-  clientId: string;
+  clientId: number;
   invoiceImage: string;
   invoiceProducts: InvoiceProduct[];
 }
