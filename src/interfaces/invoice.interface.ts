@@ -9,36 +9,46 @@ export interface CreateInvoiceData {
   invoiceProducts: InvoiceProduct__[];
 }
 
-export interface Invoice{
-  id:             number;
-  clientId:       number;
-  createdAt:      Date;
-  invoiceImage?:   string;
+export interface Invoice {
+  id: number;
+  clientId: number;
+  createdAt: Date;
+  invoiceImage?: string;
   invoiceProduct: InvoiceProduct[];
-  user:           User;
+  user: User;
 }
 
 export interface InvoiceProduct {
-  id:        number;
+  id: number;
   productId: number;
-  quantity:  number;
+  quantity: number;
   invoiceId: number;
-  product:   Product;
+  product: Product;
 }
 
 export interface Product {
-  id:          number;
-  name:        string;
+  id: number;
+  name: string;
   description?: string;
-  value:       number;
-  createdAt:   Date;
+  value: number;
+  createdAt: Date;
 }
 
-
 export interface User {
-  id:        number;
-  email:     string;
-  password:  string;
-  role:     "admin" | "client";
+  id: number;
+  email: string;
+  password: string;
+  role: "admin" | "client";
   createdAt: Date;
+}
+
+export interface Register {
+  email: string;
+  password: string;
+  password2: string;
+}
+
+export interface Login {
+  email: string;
+  password: string;
 }
