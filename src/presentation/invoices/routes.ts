@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { InvoiceController } from "./controller";
-import { createInvoiceValidator } from "../../domain/validators/invoices/validators";
+import {
+  createInvoiceValidator,
+  getInvoiceValidator,
+} from "../../domain/validators/invoices/validators";
 import { InvoiceService } from "../services/invoices.service";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
 
@@ -11,7 +14,12 @@ export class InvoiceRoutes {
 
     const todoController = new InvoiceController(invoiceService);
 
-    router.get("/", AuthMiddleware.validateJWT, todoController.getInvoices);
+    router.get(
+      "/",
+      AuthMiddleware.validateJWT,
+      getInvoiceValidator,
+      todoController.getInvoices
+    );
     router.post(
       "/",
       AuthMiddleware.validateJWT,

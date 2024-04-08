@@ -21,9 +21,20 @@ export class InvoiceController {
   // Public
 
   public getInvoices = async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors });
+    }
+
+    let { page = 1, limit = 10 } = req.query;
+    page = +page.toString();
+    limit = +limit.toString();
+
     this.invoiceService
-      .getInvoiceList()
-      .then(({ newInvoices }) => res.json(newInvoices))
+      .getInvoiceList({ page, take: limit })
+      .then(({ newInvoices, paginationInfo }) =>
+        res.json({ newInvoices, paginationInfo })
+      )
       .catch((error) => this.handleError(error, res));
   };
 

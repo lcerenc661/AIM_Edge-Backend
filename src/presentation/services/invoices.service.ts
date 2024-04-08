@@ -7,6 +7,11 @@ import {
 } from "../../interfaces/invoice.interface";
 import { CustomError } from "../../domain";
 
+interface PaginationOptions {
+  page?: number;
+  take?: number;
+}
+
 export class InvoiceService {
   constructor() {}
 
@@ -63,10 +68,14 @@ export class InvoiceService {
 
   //Public Methods
 
-  public async getInvoiceList() {
+  public async getInvoiceList({ page=1,take=10 }: PaginationOptions) {
     let invoices;
+    let totalCount: number;
+    let totalPages: number;
     try {
       invoices = await prisma.invoice.findMany({
+        take: take,
+        skip: (page - 1) * take,
         include: {
           invoiceProduct: {
             include: {
@@ -76,6 +85,10 @@ export class InvoiceService {
           user: true,
         },
       });
+
+      totalCount = await prisma.invoice.count({})
+      totalPages = Math.ceil( totalCount / +take)
+
     } catch (error) {
       throw CustomError.internalServer(
         "Something went wrong, please try again"
@@ -96,7 +109,13 @@ export class InvoiceService {
       return { ...summary, subTotal, clientSeniority, discountInfo, total };
     });
 
-    return { newInvoices };
+    const paginationInfo = {
+      currentPage: page,
+      limit: take,
+      totalPages: totalPages,
+    }
+
+    return { newInvoices, paginationInfo  };
   }
 
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
