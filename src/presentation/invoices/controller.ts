@@ -7,16 +7,16 @@ import { CustomError } from "../../domain";
 export class InvoiceController {
   constructor(public readonly invoiceService: InvoiceService) {}
 
-   // Private
+  // Private
 
-  private handleError = (error: unknown, res: Response)=>{
-    if (error instanceof CustomError){
-      return res.status(error.statusCode).json({error: error.message})
+  private handleError = (error: unknown, res: Response) => {
+    if (error instanceof CustomError) {
+      return res.status(error.statusCode).json({ error: error.message });
     }
 
-    console.log(`${error}`)
-    return res.status(500).json({ error: 'Internal server Error'})
-  }
+    console.log(`${error}`);
+    return res.status(500).json({ error: "Internal server Error" });
+  };
 
   // Public
 
@@ -25,7 +25,6 @@ export class InvoiceController {
       .getInvoiceList()
       .then(({ newInvoices }) => res.json(newInvoices))
       .catch((error) => this.handleError(error, res));
-
   };
 
   public createInvoice = async (req: Request, res: Response) => {
@@ -33,6 +32,12 @@ export class InvoiceController {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors });
     }
+
+    const { user } = req.body;
+    if (user.role !== "admin") {
+      return res.status(401).json({ error: `User ${user.email} unauthorized` });
+    }
+
     const { clientId, invoiceImage, invoiceProducts }: CreateInvoiceData =
       req.body;
 
