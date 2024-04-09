@@ -32,8 +32,8 @@ export class InvoiceController {
 
     this.invoiceService
       .getInvoiceList({ page, take: limit })
-      .then(({ newInvoices, paginationInfo }) =>
-        res.json({ newInvoices, paginationInfo })
+      .then(({ invoicesArray, paginationInfo }) =>
+        res.json({ invoicesArray, paginationInfo })
       )
       .catch((error) => this.handleError(error, res));
   };

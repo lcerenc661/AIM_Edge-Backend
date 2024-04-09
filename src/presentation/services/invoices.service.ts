@@ -24,16 +24,6 @@ export class InvoiceService {
     return total;
   }
 
-  private getClientSeniority(user: User) {
-    const { createdAt } = user;
-    const actualDate = new Date();
-    const millisecondsInYear = 1000 * 60 * 60 * 24 * 365.25;
-
-    let timeDifference =
-      (actualDate.getTime() - createdAt.getTime()) / millisecondsInYear;
-    return timeDifference.toFixed(0);
-  }
-
   private async getTotalSales(clientId: string) {
     const client = await prisma.user.findUnique({
       where: { id: clientId },
@@ -133,7 +123,7 @@ export class InvoiceService {
       );
     }
 
-    const newInvoices = invoices!.map((invoice) => {
+    const invoicesArray = invoices!.map((invoice) => {
       const subTotal = this.getSubTotal(invoice as any);
       const discount = invoice.discount;
       const total = (subTotal * discount).toFixed(2);
@@ -148,7 +138,7 @@ export class InvoiceService {
       totalPages: totalPages,
     };
 
-    return { newInvoices, paginationInfo };
+    return { invoicesArray, paginationInfo };
   }
 
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
