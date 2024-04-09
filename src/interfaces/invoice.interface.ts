@@ -1,10 +1,10 @@
 export interface InvoiceProduct__ {
-  product: number;
+  product: string;
   quantity: number;
 }
 
 export interface CreateInvoiceData {
-  clientId: number;
+  clientId: string;
   invoiceImage: string;
   invoiceProducts: InvoiceProduct__[];
 }
@@ -20,14 +20,14 @@ export interface Invoice {
 
 export interface InvoiceProduct {
   id: number;
-  productId: number;
+  productId: string;
   quantity: number;
   invoiceId: number;
   product: Product;
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   value: number;
@@ -35,7 +35,7 @@ export interface Product {
 }
 
 export interface User {
-  id: number;
+  id: string;
   email: string;
   password: string;
   role: "admin" | "client";
@@ -43,6 +43,9 @@ export interface User {
 }
 
 export interface Register {
+  name: string;
+  contactPoint?: string;
+  phone: string;
   email: string;
   password: string;
   password2: string;

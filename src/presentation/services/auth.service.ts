@@ -21,6 +21,9 @@ export class AuthService {
     try {
       newUser = await prisma.user.create({
         data: {
+          name: registerData.name,
+          contactPoint: registerData.contactPoint,
+          phone: registerData.phone,
           email: registerData.email,
           password: bcryptAdapter.hash(registerData.password),
         },

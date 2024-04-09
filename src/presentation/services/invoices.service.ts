@@ -68,7 +68,7 @@ export class InvoiceService {
 
   //Public Methods
 
-  public async getInvoiceList({ page=1,take=10 }: PaginationOptions) {
+  public async getInvoiceList({ page = 1, take = 10 }: PaginationOptions) {
     let invoices;
     let totalCount: number;
     let totalPages: number;
@@ -86,9 +86,8 @@ export class InvoiceService {
         },
       });
 
-      totalCount = await prisma.invoice.count({})
-      totalPages = Math.ceil( totalCount / +take)
-
+      totalCount = await prisma.invoice.count({});
+      totalPages = Math.ceil(totalCount / +take);
     } catch (error) {
       throw CustomError.internalServer(
         "Something went wrong, please try again"
@@ -113,9 +112,9 @@ export class InvoiceService {
       currentPage: page,
       limit: take,
       totalPages: totalPages,
-    }
+    };
 
-    return { newInvoices, paginationInfo  };
+    return { newInvoices, paginationInfo };
   }
 
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
@@ -129,6 +128,10 @@ export class InvoiceService {
       });
     } catch (error) {
       throw CustomError.badRequest("Invalid client ID");
+    }
+
+    if (invoiceProducts.length === 0) {
+      throw CustomError.badRequest("Invoice need to have at least one product");
     }
 
     try {

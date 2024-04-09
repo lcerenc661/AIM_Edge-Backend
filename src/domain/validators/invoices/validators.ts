@@ -4,7 +4,7 @@ export const createInvoiceValidator = [
   body("clientId", "clientId property is required and cannot be empty")
     .exists()
     .notEmpty()
-    .isInt(),
+    .isString(),
   body("invoiceImage", "InvoiceImage property cannot be empty")
     .optional()
     .notEmpty(),

@@ -16,6 +16,15 @@ export const userRegisterValidator = [
     .exists()
     .notEmpty()
     .isEmail(),
+  body("name", "Name is required").exists().notEmpty(),
+  body("contactPoint", "Point of contact required")
+    .optional()
+    .notEmpty()
+    .isString(),
+  body("phone", "Phone is required and should be numeric")
+    .optional()
+    .notEmpty()
+    .isNumeric(),
   body("password", "Password length should have minimum 6 characters")
     .exists()
     .notEmpty()
