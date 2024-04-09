@@ -8,6 +8,8 @@ export interface CreateInvoiceData {
   invoiceImage: string;
   invoiceProducts: InvoiceProduct__[];
   discount: number;
+  clientSeniority: number;
+  totalSales: number;
 }
 
 export interface Invoice {
@@ -41,6 +43,7 @@ export interface User {
   password: string;
   role: "admin" | "client";
   createdAt: Date;
+  totalSales: number;
 }
 
 export interface Register {

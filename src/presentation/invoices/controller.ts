@@ -54,6 +54,8 @@ export class InvoiceController {
       invoiceImage,
       invoiceProducts,
       discount,
+      clientSeniority,
+      totalSales,
     }: CreateInvoiceData = req.body;
 
     this.invoiceService
@@ -62,6 +64,8 @@ export class InvoiceController {
         invoiceImage,
         invoiceProducts,
         discount,
+        clientSeniority,
+        totalSales,
       })
       .then((newInvoice) => res.json(newInvoice))
       .catch((error) => this.handleError(error, res));

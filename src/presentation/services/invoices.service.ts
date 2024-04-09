@@ -56,12 +56,9 @@ export class InvoiceService {
 
     let totalSum = 0;
 
-    // Iterate over each invoice
     for (const invoice of client!.invoice) {
       const discount = invoice.discount;
-      // Iterate over each invoice product
       for (const invoiceProduct of invoice.invoiceProduct) {
-        // Add the product value multiplied by quantity to the total sum
         if (discount === 0) {
           totalSum += invoiceProduct.product.value * invoiceProduct.quantity;
         } else {
@@ -77,29 +74,27 @@ export class InvoiceService {
     return totalSum;
   }
 
-  //   private validateDiscount( clientSeniority: number, discount:number, totalValue: number) {
-  //     if (clientSeniority > 2) {
-  //       if (total <= 200 ) {
-  //         return false;
-        // } else if (total > 200 && total <= 1000 && 10 >= discount) {
-        //   return true;
-        // } else if (total > 2000 && discount ) {
-        //   return 1 - 0.45;
-        // } else {
-        //   return 1 - 0.3;
-        // }
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  // }
+  private validateDiscount(clientSeniority: number, totalSales: number) {
+    if (totalSales >= 200) {
+      if (totalSales >= 2000) {
+        return 45;
+      }
+      if (clientSeniority > 2) {
+        return 30;
+      }
+      if (totalSales <= 1000) {
+        return 10;
+      }
+    }
+    return 0;
+  }
 
   private getSummaryData(invoice: Invoice) {
     return {
-      InvoiceNumber: invoice.id,
-      Client: invoice.user.email,
-      Date: invoice.createdAt.toLocaleDateString(),
-      Products: invoice.invoiceProduct.map((product) => {
+      invoiceNumber: invoice.id,
+      client: invoice.user.email,
+      date: invoice.createdAt.toLocaleDateString(),
+      products: invoice.invoiceProduct.map((product) => {
         return {
           productID: product.product.id,
           quantity: product.quantity,
@@ -140,12 +135,11 @@ export class InvoiceService {
 
     const newInvoices = invoices!.map((invoice) => {
       const subTotal = this.getSubTotal(invoice as any);
-      const clientSeniority = +this.getClientSeniority(invoice.user);
       const discount = invoice.discount;
       const total = (subTotal * discount).toFixed(2);
       const summary = this.getSummaryData(invoice as any);
 
-      return { ...summary, subTotal, clientSeniority, discount, total };
+      return { ...summary, subTotal, discount, total };
     });
 
     const paginationInfo = {
@@ -163,12 +157,14 @@ export class InvoiceService {
       invoiceImage,
       invoiceProducts,
       discount,
+      clientSeniority,
+      totalSales: totalPreviousSales,
     }: CreateInvoiceData = createInvoiceData;
     let newInvoice: prismaInvoice;
 
     try {
       newInvoice = await prisma.invoice.create({
-        data: { clientId, invoiceImage, discount },
+        data: { clientId, invoiceImage, discount: +discount },
       });
     } catch (error) {
       throw CustomError.badRequest("Invalid client ID");
@@ -176,6 +172,12 @@ export class InvoiceService {
 
     if (invoiceProducts.length === 0) {
       throw CustomError.badRequest("Invoice need to have at least one product");
+    }
+
+    const isInDiscountRange =
+      discount <= this.validateDiscount(clientSeniority, totalPreviousSales);
+    if (!isInDiscountRange) {
+      throw CustomError.badRequest("Discount not valid to client");
     }
 
     try {
