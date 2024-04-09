@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 
 import { CustomError } from "../../domain";
+import { ProductService } from "../services/products.service";
 
 export class ProductController {
-  constructor() {} 
+  constructor(public readonly productService: ProductService) {}
 
   //Private
 
@@ -19,11 +20,9 @@ export class ProductController {
   //Public
 
   public getProducts = (req: Request, res: Response) => {
-    // this.invoiceService
-    // .getInvoiceList({ page, take: limit })
-    // .then(({ invoicesArray, paginationInfo }) =>
-    //   res.json({ invoicesArray, paginationInfo })
-    // )
-    // .catch((error) => this.handleError(error, res));
+    this.productService
+      .getProductList()
+      .then(({ productsArray }) => res.json({ productsArray }))
+      .catch((error) => this.handleError(error, res));
   };
 }
