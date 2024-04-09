@@ -49,11 +49,20 @@ export class InvoiceController {
       return res.status(401).json({ error: `User ${user.email} unauthorized` });
     }
 
-    const { clientId, invoiceImage, invoiceProducts }: CreateInvoiceData =
-      req.body;
+    let {
+      clientId,
+      invoiceImage,
+      invoiceProducts,
+      discount,
+    }: CreateInvoiceData = req.body;
 
     this.invoiceService
-      .createInvoice({ clientId, invoiceImage, invoiceProducts })
+      .createInvoice({
+        clientId,
+        invoiceImage,
+        invoiceProducts,
+        discount,
+      })
       .then((newInvoice) => res.json(newInvoice))
       .catch((error) => this.handleError(error, res));
   };

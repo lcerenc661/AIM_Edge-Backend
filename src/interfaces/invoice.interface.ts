@@ -7,6 +7,7 @@ export interface CreateInvoiceData {
   clientId: string;
   invoiceImage: string;
   invoiceProducts: InvoiceProduct__[];
+  discount: number;
 }
 
 export interface Invoice {

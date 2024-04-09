@@ -34,21 +34,65 @@ export class InvoiceService {
     return timeDifference.toFixed(0);
   }
 
-  private getDiscount(total: number, clientSeniority: number) {
-    if (clientSeniority > 2) {
-      if (total <= 200) {
-        return 1;
-      } else if (total > 200 && total <= 1000) {
-        return 1 - 0.1;
-      } else if (total > 2000) {
-        return 1 - 0.45;
-      } else {
-        return 1 - 0.3;
-      }
-    } else {
-      return 1;
+  private async getTotalSales(clientId: string) {
+    const client = await prisma.user.findUnique({
+      where: { id: clientId },
+      include: {
+        invoice: {
+          include: {
+            invoiceProduct: {
+              include: {
+                product: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!client) {
+      throw CustomError.badRequest("User not found to get total sales");
     }
+
+    let totalSum = 0;
+
+    // Iterate over each invoice
+    for (const invoice of client!.invoice) {
+      const discount = invoice.discount;
+      // Iterate over each invoice product
+      for (const invoiceProduct of invoice.invoiceProduct) {
+        // Add the product value multiplied by quantity to the total sum
+        if (discount === 0) {
+          totalSum += invoiceProduct.product.value * invoiceProduct.quantity;
+        } else {
+          totalSum +=
+            (invoiceProduct.product.value *
+              invoiceProduct.quantity *
+              (100 - discount)) /
+            100;
+        }
+      }
+    }
+
+    return totalSum;
   }
+
+  //   private validateDiscount( clientSeniority: number, discount:number, totalValue: number) {
+  //     if (clientSeniority > 2) {
+  //       if (total <= 200 ) {
+  //         return false;
+        // } else if (total > 200 && total <= 1000 && 10 >= discount) {
+        //   return true;
+        // } else if (total > 2000 && discount ) {
+        //   return 1 - 0.45;
+        // } else {
+        //   return 1 - 0.3;
+        // }
+  //     } else {
+  //       return false;
+  //     }
+  //   }
+  // }
 
   private getSummaryData(invoice: Invoice) {
     return {
@@ -97,15 +141,11 @@ export class InvoiceService {
     const newInvoices = invoices!.map((invoice) => {
       const subTotal = this.getSubTotal(invoice as any);
       const clientSeniority = +this.getClientSeniority(invoice.user);
-      const discount = this.getDiscount(subTotal, clientSeniority);
-      const discountInfo = +(
-        (1 - this.getDiscount(subTotal, clientSeniority)) *
-        100
-      ).toFixed(0);
+      const discount = invoice.discount;
       const total = (subTotal * discount).toFixed(2);
       const summary = this.getSummaryData(invoice as any);
 
-      return { ...summary, subTotal, clientSeniority, discountInfo, total };
+      return { ...summary, subTotal, clientSeniority, discount, total };
     });
 
     const paginationInfo = {
@@ -118,13 +158,17 @@ export class InvoiceService {
   }
 
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
-    const { clientId, invoiceImage, invoiceProducts }: CreateInvoiceData =
-      createInvoiceData;
+    const {
+      clientId,
+      invoiceImage,
+      invoiceProducts,
+      discount,
+    }: CreateInvoiceData = createInvoiceData;
     let newInvoice: prismaInvoice;
 
     try {
       newInvoice = await prisma.invoice.create({
-        data: { clientId, invoiceImage },
+        data: { clientId, invoiceImage, discount },
       });
     } catch (error) {
       throw CustomError.badRequest("Invalid client ID");
@@ -149,6 +193,11 @@ export class InvoiceService {
     } catch (error) {
       throw CustomError.badRequest("One of the products Id is not valid");
     }
+    const totalSales = await this.getTotalSales(clientId);
+    await prisma.user.update({
+      where: { id: clientId },
+      data: { totalSales: totalSales },
+    });
 
     return newInvoice;
   }

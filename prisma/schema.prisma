@@ -27,6 +27,7 @@ model User {
   password     String
   role         Role     @default(client)
   createdAt    DateTime @default(now())
+  totalSales   Int?      
 
   // Relations
   invoice Invoice[]
@@ -37,6 +38,7 @@ model Invoice {
   clientId     String
   createdAt    DateTime @default(now())
   invoiceImage String?
+  discount     Int      @default(0)
 
   // Relations
 
@@ -45,7 +47,7 @@ model Invoice {
 }
 
 model InvoiceProduct {
-  id        Int @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   productId String
   quantity  Int
   invoiceId Int
@@ -57,10 +59,10 @@ model InvoiceProduct {
 }
 
 model Product {
-  id          String @id @default(uuid())
-  name        String
-  value       Float
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  value     Float
+  createdAt DateTime @default(now())
 
   //Relations
 
