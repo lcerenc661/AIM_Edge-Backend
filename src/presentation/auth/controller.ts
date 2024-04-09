@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { prisma } from "../../data/mysql_";
 import { validationResult } from "express-validator";
 import { AuthService } from "../services/auth.service";
 import { CustomError } from "../../domain";
 
 export class AuthController {
-  constructor(public readonly authService: AuthService) {}
+  constructor(
+    public readonly authService: AuthService) {}
 
   //Private
 
