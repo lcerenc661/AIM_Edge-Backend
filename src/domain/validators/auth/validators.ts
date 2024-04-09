@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, header } from "express-validator";
 
 export const userLoginValidator = [
   body("email", "Email should be a proper email value and is required")
@@ -36,4 +36,11 @@ export const userRegisterValidator = [
     }
     return true;
   }),
+];
+
+export const refreshTokenValidator = [
+  header("refreshToken", "Refresh Token is required")
+    .exists()
+    .notEmpty() 
+    .isString(),
 ];

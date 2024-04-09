@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { AuthService } from "../services/auth.service";
 import { CustomError } from "../../domain";
+import { verify } from "crypto";
+import { json } from "stream/consumers";
 
 export class AuthController {
-  constructor(
-    public readonly authService: AuthService) {}
+  constructor(public readonly authService: AuthService) {}
 
   //Private
 
@@ -51,6 +52,25 @@ export class AuthController {
         contactPoint,
       })
       .then((user) => res.json(user))
+      .catch((error) => this.handleError(error, res));
+  };
+
+  public refreshToken = async (req: Request, res: Response) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors });
+    }
+
+    // const { refreshToken }= req.headers
+    const  refreshToken = req.headers?.refreshtoken
+    if (!refreshToken) {
+      return res.status(400).json({ error: "Unauthorized" });;
+    }
+
+    this.authService
+      .refreshJWT(refreshToken as string)
+      .then(({ token, user }) => res.json({ token, user }))
       .catch((error) => this.handleError(error, res));
   };
 }

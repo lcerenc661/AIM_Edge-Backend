@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AuthController } from "./controller";
 import {
+  refreshTokenValidator,
   userLoginValidator,
   userRegisterValidator,
 } from "../../domain/validators/auth/validators";
@@ -16,7 +17,7 @@ export class AuthRoutes {
     router.post("/login", userLoginValidator, authController.login);
     router.post("/register", userRegisterValidator, authController.register);
 
-    router.get("/user/:id", authController.login);
+    router.post("/refresh", refreshTokenValidator, authController.refreshToken);
 
     return router;
   }
