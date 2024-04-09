@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 
 import { CustomError } from "../../domain";
+import { UserService } from "../services/user.service";
 
 export class UserController {
-  constructor() // public readonly authService: AuthService
-  {}
+  constructor(public readonly userService: UserService) {}
 
   //Private
 
@@ -20,6 +20,9 @@ export class UserController {
   //Public
 
   public getUsers = (req: Request, res: Response) => {
-    res.json({ user: "users" });
+    this.userService
+      .getUserList()
+      .then(({ usersArray }) => res.json({ usersArray }))
+      .catch((error) => this.handleError(error, res));
   };
 }

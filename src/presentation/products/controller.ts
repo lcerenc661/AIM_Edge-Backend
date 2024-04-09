@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { CustomError } from "../../domain";
 
 export class ProductController {
-  constructor() {} // public readonly authService: AuthService
+  constructor() {} 
 
   //Private
 
@@ -19,6 +19,11 @@ export class ProductController {
   //Public
 
   public getProducts = (req: Request, res: Response) => {
-    res.json({ product: "product" });
+    // this.invoiceService
+    // .getInvoiceList({ page, take: limit })
+    // .then(({ invoicesArray, paginationInfo }) =>
+    //   res.json({ invoicesArray, paginationInfo })
+    // )
+    // .catch((error) => this.handleError(error, res));
   };
 }
