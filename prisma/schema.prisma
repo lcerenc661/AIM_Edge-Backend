@@ -19,21 +19,26 @@ enum Role {
 }
 
 model User {
-  id        Int  @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      Role     @default(client)
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  name         String
+  contactPoint String?
+  phone        String
+  email        String   @unique
+  password     String
+  role         Role     @default(client)
+  createdAt    DateTime @default(now())
+  totalSales   Int?      
 
   // Relations
   invoice Invoice[]
 }
 
 model Invoice {
-  id           Int  @id @default(autoincrement())
-  clientId     Int
+  id           Int      @id @default(autoincrement())
+  clientId     String
   createdAt    DateTime @default(now())
   invoiceImage String?
+  discount     Int      @default(0)
 
   // Relations
 
@@ -42,8 +47,8 @@ model Invoice {
 }
 
 model InvoiceProduct {
-  id        Int  @id @default(autoincrement())
-  productId Int 
+  id        Int    @id @default(autoincrement())
+  productId String
   quantity  Int
   invoiceId Int
 
@@ -51,15 +56,13 @@ model InvoiceProduct {
 
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   product Product @relation(fields: [productId], references: [id])
-
 }
 
 model Product {
-  id          Int  @id @default(autoincrement())
-  name        String
-  description String?
-  value       Float
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  value     Float
+  createdAt DateTime @default(now())
 
   //Relations
 
