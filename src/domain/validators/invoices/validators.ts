@@ -11,17 +11,29 @@ export const createInvoiceValidator = [
   body("invoiceProducts", "Invoice Product is required and cannot be empty")
     .notEmpty()
     .isArray(),
-  body("discount", "Invoice Product is required and cannot be empty")
+  body("discount", "Discount is required, cannot be empty, and must be numeric")
+    .exists()
     .notEmpty()
-    .optional(),
+    .isInt(),
+  body(
+    "clientSeniority",
+    "clientSeniority is required, cannot be empty, and must be numeric"
+  )
+    .exists()
+    .notEmpty()
+    .isNumeric(),
+  body(
+    "totalSales",
+    "TotalSales is required, cannot be empty, and must be numeric"
+  )
+    .exists()
+    .notEmpty()
+    .isNumeric(),
   body("invoiceProducts.*.product", "Product must be a string").isInt(),
   body("invoiceProducts.*.quantity", "Quantity must be a number").isNumeric(),
-  
 ];
 
 export const getInvoiceValidator = [
   query("page", "Page must be a number").optional().isNumeric(),
   query("limit", "Limit must be a number").optional().isNumeric(),
-]
-
-
+];
