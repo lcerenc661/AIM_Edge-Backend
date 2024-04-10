@@ -10,7 +10,7 @@ export class UploadRoutes {
     const fileUploadService =  new FileUploadService()
     const uploadController = new UploadController(fileUploadService);
 
-    router.post("/", uploadController.uploadFile);
+    router.post("/:id", uploadController.uploadFile);
 
     return router;
   }

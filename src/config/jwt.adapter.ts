@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
-import { envs } from "./envs";
 
-const JWT_SEED = envs.JWT_SEED;
-const JWT_SEED_REFRESH = envs.JWT_SEED_REFRESH;
+
+const JWT_SEED = process.env.JWT_SEED;
+const JWT_SEED_REFRESH = process.env.JWT_SEED_REFRESH;
 
 export const jwtAdapter = {
   generateToken: async (payload: any, duration: string = "2h") => {
     return new Promise((resolve: any) => {
-      jwt.sign(payload, JWT_SEED, { expiresIn: duration }, (err, token) => {
+      jwt.sign(payload, JWT_SEED as string, { expiresIn: duration }, (err, token) => {
         if (err) return resolve(null);
 
         return resolve(token);
@@ -17,7 +17,7 @@ export const jwtAdapter = {
 
   validateToken: <T>(token: string): Promise<T | null> => {
     return new Promise((resolve: any) => {
-      jwt.verify(token, JWT_SEED, (err, decoded) => {
+      jwt.verify(token, JWT_SEED as string, (err, decoded) => {
         if (err) {
           return resolve(null);
         }
@@ -28,7 +28,7 @@ export const jwtAdapter = {
 
   validateRefreshToken: <T>(token: string): Promise<T | null> => {
     return new Promise((resolve: any) => {
-      jwt.verify(token, JWT_SEED_REFRESH, (err, decoded) => {
+      jwt.verify(token, JWT_SEED_REFRESH as string, (err, decoded) => {
         if (err) {
           return resolve(null);
         }
@@ -41,7 +41,7 @@ export const jwtAdapter = {
     return new Promise((resolve: any) => {
       jwt.sign(
         payload,
-        JWT_SEED_REFRESH,
+        JWT_SEED_REFRESH as string,
         { expiresIn: duration },
         (err, token) => {
           if (err) return resolve(null);

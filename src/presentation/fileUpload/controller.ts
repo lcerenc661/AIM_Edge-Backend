@@ -20,13 +20,13 @@ export class UploadController {
   // Public
 
   public uploadFile = (req: Request, res: Response) => {
-    const files = req.files;
+    const { id } = req.params;
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).json({ error: "No files were selected" });
     }
     const file = req.files.file as UploadedFile;
     this.fileUploadService
-      .uploadFile(file)
+      .uploadFile({ file, newFileName: `invoice#${id}` })
       .then((uploaded) => res.json(uploaded))
       .catch((error) => this.handleError(error, res));
   };

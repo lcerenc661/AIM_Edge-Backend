@@ -1,20 +1,26 @@
-import { PutObjectCommand, S3Client  } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
-
-interface BucketParams{
-  Bucket: string,
-  Key: string,
-  Body: Buffer,
+interface UploadParams {
+  Bucket: string;
+  Key: string;
+  Body: Buffer;
 }
 
 const s3Config = {
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_ACCESS_SECRET,
-  region: "us-east-1",
+  region: "us-east-2",
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY,
+    secretAccessKey: process.env.ACCESS_SECRET,
+  },
 };
 
-export const s3Client = new S3Client(s3Config);
+export const s3Client = new S3Client(s3Config as any);
 
-export const putObject = (bucketParams:BucketParams) =>{
-  return new PutObjectCommand(bucketParams)
-} 
+export const putObject = (uploadParams: UploadParams, fileName: string) => {
+  const bucketParams = {
+    ...uploadParams,
+    Key: fileName,
+  };
+  
+  return new PutObjectCommand(bucketParams);
+};
