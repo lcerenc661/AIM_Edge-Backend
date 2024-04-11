@@ -10,6 +10,7 @@ export interface CreateInvoiceData {
   discount: number;
   clientSeniority: number;
   totalSales: number;
+  createdAt: Date;
 }
 
 export interface Invoice {
