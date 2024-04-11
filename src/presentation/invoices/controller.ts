@@ -56,6 +56,7 @@ export class InvoiceController {
       discount,
       clientSeniority,
       totalSales,
+      createdAt,
     }: CreateInvoiceData = req.body;
 
     this.invoiceService
@@ -66,6 +67,7 @@ export class InvoiceController {
         discount,
         clientSeniority,
         totalSales,
+        createdAt,
       })
       .then((newInvoice) => res.json(newInvoice))
       .catch((error) => this.handleError(error, res));

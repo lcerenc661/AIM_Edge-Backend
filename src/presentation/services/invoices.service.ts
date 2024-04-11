@@ -126,7 +126,8 @@ export class InvoiceService {
     const invoicesArray = invoices!.map((invoice) => {
       const subTotal = this.getSubTotal(invoice as any);
       const discount = invoice.discount;
-      const total = (subTotal * discount).toFixed(2);
+      const totalDiscount = (subTotal * discount) / 100;
+      const total = (subTotal - totalDiscount).toFixed(0);
       const summary = this.getSummaryData(invoice as any);
 
       return { ...summary, subTotal, discount, total };
@@ -144,6 +145,7 @@ export class InvoiceService {
   public async createInvoice(createInvoiceData: CreateInvoiceData) {
     const {
       clientId,
+      createdAt,
       invoiceImage,
       invoiceProducts,
       discount,
@@ -154,7 +156,7 @@ export class InvoiceService {
 
     try {
       newInvoice = await prisma.invoice.create({
-        data: { clientId, invoiceImage, discount: +discount },
+        data: { clientId, invoiceImage, discount: +discount, createdAt },
       });
     } catch (error) {
       throw CustomError.badRequest("Invalid client ID");
