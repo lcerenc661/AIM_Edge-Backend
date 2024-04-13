@@ -24,6 +24,7 @@ export class FileUploadService {
       Key: fileName,
       Body: file.data,
     };
+    console.log(process.env.S3_BUCKET_NAME);
 
     try {
       // Upload the file and get the object URL
@@ -43,7 +44,7 @@ export class FileUploadService {
       // Upload the file to S3
       const response = await s3Client.send(putObject(bucketParams, fileName));
       // Construct the URL using the bucket name and file name
-      const objectUrl = `https://${bucketParams.Bucket}.s3.amazonaws.com/${fileName}`;
+      const objectUrl = fileName;
       return objectUrl;
     } catch (error) {
       console.error("Error uploading file to S3:", error);
