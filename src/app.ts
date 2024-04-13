@@ -1,5 +1,9 @@
 import { AppRoutes } from "./presentation/routes";
 import { Server } from "./presentation/server";
+import dotenv from 'dotenv';
+
+
+dotenv.config();
 
 (() => {
   main();

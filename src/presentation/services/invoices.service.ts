@@ -6,12 +6,14 @@ import {
   User,
 } from "../../interfaces/invoice.interface";
 import { CustomError } from "../../domain";
+import { getObject } from "../../config";
+// import dotenv from 'dotenv';
 
 interface PaginationOptions {
   page?: number;
   take?: number;
 }
-
+// dotenv.config();
 export class InvoiceService {
   constructor() {}
 
@@ -79,7 +81,28 @@ export class InvoiceService {
     return 0;
   }
 
-  private getSummaryData(invoice: Invoice) {
+  private async getImageURL(invoice: Invoice) {
+    if (!invoice.invoiceImage) {
+      return "noImage";
+    }
+    if (invoice.invoiceImage.length > 10){
+
+      try {
+        const urlImage = await getObject({
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: invoice.invoiceImage,
+        });
+        console.log(urlImage);
+        return urlImage;
+      } catch (error) {
+        console.log(error);
+        return "noImage";
+      }
+    }
+    return "noImage";
+  }
+
+  private async getSummaryData(invoice: Invoice) {
     return {
       invoiceNumber: invoice.id,
       client: invoice.user.email,
@@ -91,7 +114,7 @@ export class InvoiceService {
           productName: product.product.name,
         };
       }),
-      Image: invoice.invoiceImage ?? "noImage",
+      Image: await this.getImageURL(invoice),
     };
   }
 
@@ -121,17 +144,17 @@ export class InvoiceService {
       throw CustomError.internalServer(
         "Something went wrong, please try again"
       );
-    }
+    } 
 
-    const invoicesArray = invoices!.map((invoice) => {
+    const invoicesArray = await Promise.all(invoices!.map(async(invoice) => {
       const subTotal = this.getSubTotal(invoice as any);
       const discount = invoice.discount;
       const totalDiscount = (subTotal * discount) / 100;
       const total = (subTotal - totalDiscount).toFixed(0);
-      const summary = this.getSummaryData(invoice as any);
+      const summary = await this.getSummaryData(invoice as any);
 
       return { ...summary, subTotal, discount, total };
-    });
+    }));
 
     const paginationInfo = {
       currentPage: page,
